@@ -164,7 +164,6 @@ function createCredential(options) {
     return navigator.credentials.create({publicKey: options, signal: abortSignal})
         .then(createResponse => {
             let publicKeyCredential = {
-                rawId: base64UrlEncode(createResponse.rawId),
                 id: base64UrlEncode(createResponse.rawId),
                 response : {
                     clientDataJSON: base64UrlEncode(createResponse.response.clientDataJSON),
@@ -183,14 +182,6 @@ function createCredential(options) {
             }
 
             logObject("=== PublicKeyCredential ===", publicKeyCredential);
-
-            // console.log("=== Attestation response ===");
-            // logVariable("rawId (b64url)", publicKeyCredential.rawId)
-            // logVariable("id (b64url)", publicKeyCredential.id);
-            // logVariable("response.clientDataJSON (b64url)", publicKeyCredential.response.clientDataJSON);
-            // logVariable("response.attestationObject (b64url)", publicKeyCredential.response.attestationObject);
-            // logVariable("response.transports", publicKeyCredential.response.transports);
-            // logVariable("id", publicKeyCredential.type);
 
             return rest_post("/register/verify", publicKeyCredential);
         })

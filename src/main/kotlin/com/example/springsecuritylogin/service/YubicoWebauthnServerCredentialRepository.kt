@@ -32,7 +32,8 @@ class YubicoWebauthnServerCredentialRepository(
         TODO("Not yet implemented")
     }
 
-    override fun lookupAll(p0: ByteArray?): MutableSet<RegisteredCredential> {
-        TODO("Not yet implemented")
+    override fun lookupAll(p0: ByteArray?): Set<RegisteredCredential> {
+        // TODO
+        return emptySet()
     }
 }
