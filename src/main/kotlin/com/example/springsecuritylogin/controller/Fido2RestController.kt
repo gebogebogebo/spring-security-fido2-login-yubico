@@ -97,11 +97,12 @@ class Fido2RestController(
         session: HttpSession
     ): ServerPublicKeyCredentialGetOptionsResponse {
         return try {
-            val serverResponse = webAuthn4JServerService.getAuthenticateOption()
+            val assertionRequest = yubicoWebauthnServerService.getAuthenticateOption()
 
-            session.setAttribute("challenge", serverResponse.challenge.toString())
+            session.setAttribute("challenge", assertionRequest.publicKeyCredentialRequestOptions.challenge.base64Url)
+            session.setAttribute("assertionRequest", assertionRequest)
 
-            return ServerPublicKeyCredentialGetOptionsResponse(serverResponse)
+            return ServerPublicKeyCredentialGetOptionsResponse(assertionRequest.publicKeyCredentialRequestOptions)
         } catch (e: Exception) {
             ServerPublicKeyCredentialGetOptionsResponse(Status.FAILED, e.message ?: "")
         }

@@ -239,36 +239,25 @@ function getAssertion(options) {
     }
 
     return navigator.credentials.get(publicKeyCredentialRequestOptions)
-        .then(rawAssertion => {
-            logObject("raw assertion", rawAssertion);
-            logVariable("raw assertion", rawAssertion);
-
-            let assertion = {
-                rawId: base64UrlEncode(rawAssertion.rawId),
-                id: base64UrlEncode(rawAssertion.rawId),
+        .then(getResponse => {
+            let publicKeyCredential = {
+                id: base64UrlEncode(getResponse.rawId),
                 response: {
-                    clientDataJSON: base64UrlEncode(rawAssertion.response.clientDataJSON),
-                    userHandle: base64UrlEncode(rawAssertion.response.userHandle),
-                    signature: base64UrlEncode(rawAssertion.response.signature),
-                    authenticatorData: base64UrlEncode(rawAssertion.response.authenticatorData)
+                    clientDataJSON: base64UrlEncode(getResponse.response.clientDataJSON),
+                    userHandle: base64UrlEncode(getResponse.response.userHandle),
+                    signature: base64UrlEncode(getResponse.response.signature),
+                    authenticatorData: base64UrlEncode(getResponse.response.authenticatorData)
                 },
-                type: rawAssertion.type,
+                type: getResponse.type,
             };
 
-            if (rawAssertion.getClientExtensionResults) {
-                assertion.extensions = rawAssertion.getClientExtensionResults();
+            if (getResponse.getClientExtensionResults) {
+                publicKeyCredential.clientExtensionResults = getResponse.getClientExtensionResults();
             }
 
-            console.log("=== Assertion response ===");
-            logVariable("rawId (b64url)", assertion.rawId);
-            logVariable("id (b64url)", assertion.id);
-            logVariable("response.userHandle (b64url)", assertion.response.userHandle);
-            logVariable("response.authenticatorData (b64url)", assertion.response.authenticatorData);
-            logVariable("response.lientDataJSON", assertion.response.clientDataJSON);
-            logVariable("response.signature (b64url)", assertion.response.signature);
-            logVariable("id", assertion.type);
+            logObject("=== PublicKeyCredential ===", publicKeyCredential);
 
-            return Promise.resolve(assertion);
+            return Promise.resolve(publicKeyCredential);
         })
         .catch(function(error) {
             logVariable("get assertion error", error);

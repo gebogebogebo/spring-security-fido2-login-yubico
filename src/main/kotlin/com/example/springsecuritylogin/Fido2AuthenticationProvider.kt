@@ -3,7 +3,10 @@ package com.example.springsecuritylogin
 import com.example.springsecuritylogin.service.Assertion
 import com.example.springsecuritylogin.service.FidoCredentialService
 import com.example.springsecuritylogin.service.WebAuthn4JServerService
+import com.example.springsecuritylogin.service.YubicoWebauthnServerService
 import com.example.springsecuritylogin.util.SecurityContextUtil
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.yubico.webauthn.AssertionRequest
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -11,12 +14,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
+import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions
 
 
 @Component
 class Fido2AuthenticationProvider(
     private val mFidoCredentialService: FidoCredentialService,
     private val webAuthn4JServerService: WebAuthn4JServerService,
+    private val yubicoWebauthnServerService: YubicoWebauthnServerService,
     private val request: HttpServletRequest?
 ) : AuthenticationProvider {
 
@@ -25,6 +30,9 @@ class Fido2AuthenticationProvider(
             // verify FIDO assertion
             val challenge = request?.session?.getAttribute("challenge") as? String
                 ?: throw BadCredentialsException("challenge not found")
+
+            val assertionRequest = request.session.getAttribute("assertionRequest") as? AssertionRequest
+                ?: throw BadCredentialsException("assertionRequest not found")
 
             val getResult = authentication.credentials.publicKeyCredentialGetResult
             if (getResult.response == null) {
@@ -37,7 +45,25 @@ class Fido2AuthenticationProvider(
                 throw BadCredentialsException("credential not found")
             }
 
+            // TODO
+            val mapper = jacksonObjectMapper()
+            val publicKeyCredentialJson = mapper.writeValueAsString(getResult)
+
             val verifyResult = try {
+                yubicoWebauthnServerService.verifyAuthenticateAssertion(
+                    challenge,
+                    Assertion(
+                        getResult.id,
+                        getResult.response.userHandle,
+                        getResult.response.authenticatorData,
+                        getResult.response.clientDataJSON,
+                        getResult.response.signature,
+                    ),
+                    assertionRequest,
+                    publicKeyCredentialJson,
+                    credentialRecord
+                )
+
                 webAuthn4JServerService.verifyAuthenticateAssertion(
                     challenge,
                     Assertion(

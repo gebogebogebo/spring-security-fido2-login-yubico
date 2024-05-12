@@ -5,9 +5,8 @@ import com.webauthn4j.data.extension.client.ExtensionClientOutput
 
 class PublicKeyCredentialGetResult {
     val id: String = ""
-    val rawId: String = ""
     val response: AuthenticatorAssertionResponse? = null
-    val extensions: AuthenticationExtensionsClientOutputs<ExtensionClientOutput>? = null
+    val clientExtensionResults: AuthenticationExtensionsClientOutputs<ExtensionClientOutput>? = null
     val type: String? = null
 
     class AuthenticatorAssertionResponse {

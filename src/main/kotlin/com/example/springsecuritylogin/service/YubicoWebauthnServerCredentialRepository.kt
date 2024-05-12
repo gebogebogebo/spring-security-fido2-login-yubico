@@ -15,7 +15,7 @@ class YubicoWebauthnServerCredentialRepository(
     private val mFidoCredentialRepository: MfidoCredentialRepository,
 ) : CredentialRepository {
 
-    override fun getCredentialIdsForUsername(userId: String?): Set<PublicKeyCredentialDescriptor> {
+    override fun getCredentialIdsForUsername(userId: String): Set<PublicKeyCredentialDescriptor> {
         // TODO
         return emptySet()
     }
@@ -24,15 +24,16 @@ class YubicoWebauthnServerCredentialRepository(
         TODO("Not yet implemented")
     }
 
-    override fun getUsernameForUserHandle(p0: ByteArray?): Optional<String> {
+    override fun getUsernameForUserHandle(userHandle: ByteArray): Optional<String> {
+        // TODO
+        return Optional.of("user1")
+    }
+
+    override fun lookup(credentialId: ByteArray, p1: ByteArray?): Optional<RegisteredCredential> {
         TODO("Not yet implemented")
     }
 
-    override fun lookup(p0: ByteArray?, p1: ByteArray?): Optional<RegisteredCredential> {
-        TODO("Not yet implemented")
-    }
-
-    override fun lookupAll(p0: ByteArray?): Set<RegisteredCredential> {
+    override fun lookupAll(p0: ByteArray): Set<RegisteredCredential> {
         // TODO
         return emptySet()
     }
