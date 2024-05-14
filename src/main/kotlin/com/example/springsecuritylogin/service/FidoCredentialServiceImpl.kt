@@ -3,15 +3,8 @@ package com.example.springsecuritylogin.service
 import com.example.springsecuritylogin.repository.MfidoCredentialForYubico
 import com.example.springsecuritylogin.repository.MfidoCredentialRepository
 import com.example.springsecuritylogin.repository.MuserRepository
-import com.webauthn4j.converter.AttestedCredentialDataConverter
-import com.webauthn4j.converter.util.ObjectConverter
-import com.webauthn4j.credential.CredentialRecord
-import com.webauthn4j.credential.CredentialRecordImpl
-import com.webauthn4j.data.attestation.statement.NoneAttestationStatement
-import com.webauthn4j.data.extension.authenticator.AuthenticationExtensionsAuthenticatorOutputs
-import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput
-import com.webauthn4j.util.Base64UrlUtil
 import org.springframework.stereotype.Service
+import java.util.Base64
 
 
 @Service
@@ -23,7 +16,8 @@ class FidoCredentialServiceImpl(
         val mUser = mUserRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
 
         // encode
-        val encodedCredentialId = Base64UrlUtil.encodeToString(attestationVerifyResult.credentialId)
+        val encoder = Base64.getUrlEncoder()
+        val encodedCredentialId = encoder.encodeToString(attestationVerifyResult.credentialId)
 
         val entity = MfidoCredentialForYubico(
             0,
@@ -35,6 +29,7 @@ class FidoCredentialServiceImpl(
         mFidoCredentialRepository.save(entity)
     }
 
+    /*
     override fun load(userInternalId: String, credentialId: String): Pair<CredentialRecord?,String?> {
         val entityList = mFidoCredentialRepository.findByUserInternalId(userInternalId)
         val mFidoCredential = entityList.find { it.credentialId == credentialId} ?: return null to null
@@ -66,5 +61,6 @@ class FidoCredentialServiceImpl(
 
         return credentialRecord to mUser.id
     }
+     */
 
 }

@@ -32,10 +32,10 @@ class Fido2AuthenticationProvider(
             }
 
             val userInternalId = webauthnServerService.toUserInternalId(getResult.response.userHandle)
-            val (credentialRecord, userId) = mFidoCredentialService.load(userInternalId, getResult.id)
-            if (credentialRecord == null) {
-                throw BadCredentialsException("credential not found")
-            }
+//            val (credentialRecord, userId) = mFidoCredentialService.load(userInternalId, getResult.id)
+//            if (credentialRecord == null) {
+//                throw BadCredentialsException("credential not found")
+//            }
 
             val verifyResult = try {
                 webauthnServerService.verifyAuthenticateAssertion(
@@ -49,7 +49,8 @@ class Fido2AuthenticationProvider(
                 throw BadCredentialsException("Assertion Verify Failed")
             }
 
-            userId
+            // TODO
+            "userId"
         } else {
             throw BadCredentialsException("Invalid Authentication")
         }
