@@ -7,7 +7,7 @@ interface WebauthnServerService {
 
     fun verifyRegisterAttestation(
         registerOption: RegisterOption,
-        attestation: Attestation,
+        publicKeyCredentialCreateResultJson: String,
     ): AttestationVerifyResult
 
     fun getAuthenticateOption(): AuthenticateOption

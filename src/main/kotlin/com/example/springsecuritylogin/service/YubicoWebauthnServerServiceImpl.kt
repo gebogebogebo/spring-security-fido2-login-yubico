@@ -62,9 +62,9 @@ class YubicoWebauthnServerServiceImpl(
 
     override fun verifyRegisterAttestation(
         registerOption: RegisterOption,
-        attestation: Attestation,
+        publicKeyCredentialCreateResultJson: String,
     ): AttestationVerifyResult {
-        val pkc = PublicKeyCredential.parseRegistrationResponseJson(attestation.publicKeyCredentialJson)
+        val pkc = PublicKeyCredential.parseRegistrationResponseJson(publicKeyCredentialCreateResultJson)
 
         val finishRegistrationOptions = FinishRegistrationOptions.builder()
             .request(registerOption.publicKeyCredentialCreationOptions)

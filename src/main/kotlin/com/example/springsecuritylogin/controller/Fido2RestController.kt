@@ -8,7 +8,6 @@ import com.example.springsecuritylogin.util.SecurityContextUtil
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
 
@@ -38,12 +37,9 @@ class Fido2RestController(
 
     @PostMapping("/register/verify")
     fun registerVerify(
-        @RequestBody publicKeyCredentialCreateResult: PublicKeyCredentialCreateResult,
-        httpServletRequest: HttpServletRequest,
+        @RequestBody publicKeyCredentialCreateResultJson: String,
         session: HttpSession
     ): ServerResponse {
-        if (publicKeyCredentialCreateResult.response == null) return ServerResponse(Status.FAILED, "response not found")
-
         val registerOption = session.getAttribute("registerOption") as? RegisterOption
             ?: return ServerResponse(Status.FAILED, "registerOption not found")
 
@@ -55,7 +51,7 @@ class Fido2RestController(
         return try {
             val attestationVerifyResult = webauthnServerService.verifyRegisterAttestation(
                 registerOption,
-                publicKeyCredentialCreateResult.toAttestation(),
+                publicKeyCredentialCreateResultJson
             )
 
             fidoCredentialService.save(user.username, attestationVerifyResult)
