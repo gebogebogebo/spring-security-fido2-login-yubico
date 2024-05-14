@@ -3,7 +3,7 @@ package com.example.springsecuritylogin.controller
 import com.example.springsecuritylogin.service.FidoCredentialService
 import com.example.springsecuritylogin.service.RegisterOption
 import com.example.springsecuritylogin.service.Status
-import com.example.springsecuritylogin.service.YubicoWebauthnServerService
+import com.example.springsecuritylogin.service.WebauthnServerService
 import com.example.springsecuritylogin.util.SecurityContextUtil
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession
 
 @RestController
 class Fido2RestController(
-    private val yubicoWebauthnServerService: YubicoWebauthnServerService,
+    private val webauthnServerService: WebauthnServerService,
     private val fidoCredentialService: FidoCredentialService,
 ) {
     @PostMapping("/register/option")
@@ -27,7 +27,7 @@ class Fido2RestController(
         )
 
         return try {
-            val registerOption = yubicoWebauthnServerService.getRegisterOption(user.username)
+            val registerOption = webauthnServerService.getRegisterOption(user.username)
             session.setAttribute("registerOption", registerOption)
 
             return ServerPublicKeyCredentialCreationOptionsResponse(registerOption)
@@ -53,7 +53,7 @@ class Fido2RestController(
         )
 
         return try {
-            val attestationVerifyResult = yubicoWebauthnServerService.verifyRegisterAttestation(
+            val attestationVerifyResult = webauthnServerService.verifyRegisterAttestation(
                 registerOption,
                 publicKeyCredentialCreateResult.toAttestation(),
             )
@@ -71,7 +71,7 @@ class Fido2RestController(
         session: HttpSession
     ): ServerPublicKeyCredentialGetOptionsResponse {
         return try {
-            val authenticateOption = yubicoWebauthnServerService.getAuthenticateOption()
+            val authenticateOption = webauthnServerService.getAuthenticateOption()
             session.setAttribute("authenticateOption", authenticateOption)
 
             return ServerPublicKeyCredentialGetOptionsResponse(authenticateOption)

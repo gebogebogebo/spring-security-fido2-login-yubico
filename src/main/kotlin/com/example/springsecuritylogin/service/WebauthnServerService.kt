@@ -1,6 +1,6 @@
 package com.example.springsecuritylogin.service
 
-interface YubicoWebauthnServerService {
+interface WebauthnServerService {
     fun getRegisterOption(
         userId: String,
     ): RegisterOption

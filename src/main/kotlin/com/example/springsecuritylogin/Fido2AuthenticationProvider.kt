@@ -2,7 +2,7 @@ package com.example.springsecuritylogin
 
 import com.example.springsecuritylogin.service.AuthenticateOption
 import com.example.springsecuritylogin.service.FidoCredentialService
-import com.example.springsecuritylogin.service.YubicoWebauthnServerService
+import com.example.springsecuritylogin.service.WebauthnServerService
 import com.example.springsecuritylogin.util.SecurityContextUtil
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
 @Component
 class Fido2AuthenticationProvider(
     private val mFidoCredentialService: FidoCredentialService,
-    private val yubicoWebauthnServerService: YubicoWebauthnServerService,
+    private val webauthnServerService: WebauthnServerService,
     private val request: HttpServletRequest?
 ) : AuthenticationProvider {
 
@@ -31,14 +31,14 @@ class Fido2AuthenticationProvider(
                 throw BadCredentialsException("Invalid Assertion")
             }
 
-            val userInternalId = yubicoWebauthnServerService.toUserInternalId(getResult.response.userHandle)
+            val userInternalId = webauthnServerService.toUserInternalId(getResult.response.userHandle)
             val (credentialRecord, userId) = mFidoCredentialService.load(userInternalId, getResult.id)
             if (credentialRecord == null) {
                 throw BadCredentialsException("credential not found")
             }
 
             val verifyResult = try {
-                yubicoWebauthnServerService.verifyAuthenticateAssertion(
+                webauthnServerService.verifyAuthenticateAssertion(
                     authenticateOption,
                     getResult.toAssertion(),
                 )

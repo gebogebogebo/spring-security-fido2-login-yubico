@@ -1,6 +1,5 @@
 package com.example.springsecuritylogin.service
 
-import com.example.springsecuritylogin.repository.MfidoCredentialRepository
 import com.example.springsecuritylogin.repository.MuserRepository
 import com.yubico.webauthn.FinishAssertionOptions
 import com.yubico.webauthn.FinishRegistrationOptions
@@ -21,9 +20,8 @@ import java.util.Base64
 @Service
 class YubicoWebauthnServerServiceImpl(
     private val mUserRepository: MuserRepository,
-    private val mFidoCredentialRepository: MfidoCredentialRepository,
     private val yubicoWebauthnServerCredentialRepository: YubicoWebauthnServerCredentialRepository,
-) : YubicoWebauthnServerService {
+) : WebauthnServerService {
     private val rpId = RelyingPartyIdentity.builder()
         .id("localhost")
         .name("yubico-webauthn-server-test")
