@@ -15,8 +15,7 @@ interface WebauthnServerService {
     fun verifyAuthenticateAssertion(
         authenticateOption: AuthenticateOption,
         publicKeyCredentialGetResultJson: String,
-    ): Boolean
+    ): AssertionVerifyResult
 
     fun toUserInternalId(encodedUserHandle: String): String
-
 }

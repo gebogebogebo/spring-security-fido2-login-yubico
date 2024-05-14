@@ -45,12 +45,11 @@ class Fido2AuthenticationProvider(
             } catch (e: Exception) {
                 throw BadCredentialsException("Invalid Assertion")
             }
-            if (!verifyResult) {
+            if (!verifyResult.isSuccess) {
                 throw BadCredentialsException("Assertion Verify Failed")
             }
 
-            // TODO
-            "userId"
+            verifyResult.userId
         } else {
             throw BadCredentialsException("Invalid Authentication")
         }

@@ -7,6 +7,7 @@ import com.yubico.webauthn.RegisteredCredential
 import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import org.springframework.stereotype.Repository
+import java.util.Base64
 import java.util.Optional
 
 @Repository
@@ -25,49 +26,33 @@ class YubicoWebauthnServerCredentialRepository(
     }
 
     override fun getUsernameForUserHandle(userHandle: ByteArray): Optional<String> {
-        // TODO
-        return Optional.of("user1")
+        val userInternalId = String(userHandle.bytes)
+        val mUser = mUserRepository.findByInternalId(userInternalId) ?: return Optional.empty()
+
+        return Optional.of(mUser.id)
     }
 
     override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential> {
 
-        /*
-        RegisteredCredential.builder()
+        // encode
+        val encoder = Base64.getUrlEncoder()
+        val encodedCredentialId = encoder.encodeToString(credentialId.bytes)
+
+        val userInternalId = String(userHandle.bytes)
+        val credential = mFidoCredentialRepository.findByUserInternalId(userInternalId)
+            .find { it.credentialId == encodedCredentialId }
+        if (credential == null) {
+            return Optional.empty()
+        }
+
+        return Optional.of(RegisteredCredential.builder()
             .credentialId(credentialId)
             .userHandle(userHandle)
-            .publicKeyCose(new ByteArray(authenticatorData.getCredentialPublicKey()))
-            .signatureCount(authenticatorData.getSignCount())
-            .build()
-        */
-
-        TODO("Not yet implemented")
+            .publicKeyCose(ByteArray(credential.credentialPublicKey))
+            .signatureCount(credential.signCount)
+            .build())
     }
 
-/*
-    @Override
-    public Optional<RegisteredCredential> lookup(final ByteArray credentialId, final ByteArray userHandle) {
-
-        final String userHandleDec = new String(userHandle.getBytes(), StandardCharsets.UTF_8);
-
-        final Optional<WebAuthnAuthenticatorDataWithType> authenticator = Optional.ofNullable(
-                webAuthnAuthenticatorDataWithTypeCache.findByNulabIdAndCredentialId(
-                        userHandleDec,
-                        credentialId.getBytes(),
-                        () -> webAuthnAuthenticatorDataDao.findAllByNulabId(userHandleDec)
-                )
-        );
-
-        return authenticator
-                .filter(auth -> auth.getWebauthnAuthenticatorDataType().isSecurityDevice())
-                .map(authenticatorData -> RegisteredCredential.builder()
-                        .credentialId(credentialId)
-                        .userHandle(userHandle)
-                        .publicKeyCose(new ByteArray(authenticatorData.getCredentialPublicKey()))
-                        .signatureCount(authenticatorData.getSignCount())
-                        .build());
-    }
-
- */
     override fun lookupAll(p0: ByteArray): Set<RegisteredCredential> {
         // TODO
         return emptySet()

@@ -93,7 +93,7 @@ class YubicoWebauthnServerServiceImpl(
     override fun verifyAuthenticateAssertion(
         authenticateOption: AuthenticateOption,
         publicKeyCredentialGetResultJson: String,
-    ): Boolean {
+    ): AssertionVerifyResult {
 
         val pkc = PublicKeyCredential.parseAssertionResponseJson(publicKeyCredentialGetResultJson)
 
@@ -104,7 +104,7 @@ class YubicoWebauthnServerServiceImpl(
 
         val result = rp.finishAssertion(finishAssertionOptions)
 
-        return result.isSuccess
+        return AssertionVerifyResult(result.isSuccess, result.username)
     }
 
 
