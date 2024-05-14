@@ -20,7 +20,6 @@ import com.yubico.webauthn.data.UserIdentity
 import com.yubico.webauthn.data.UserVerificationRequirement
 import org.springframework.stereotype.Service
 import java.nio.charset.StandardCharsets
-import java.util.Base64
 
 @Service
 class YubicoWebauthnServerServiceImpl(
@@ -117,9 +116,4 @@ class YubicoWebauthnServerServiceImpl(
         return ByteArray(userId.toByteArray(StandardCharsets.UTF_8))
     }
 
-    override fun toUserInternalId(encodedUserHandle: String): String {
-        val decoder = Base64.getUrlDecoder()
-        val userHandle = decoder.decode(encodedUserHandle)
-        return String(userHandle, StandardCharsets.UTF_8)
-    }
 }

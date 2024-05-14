@@ -17,5 +17,4 @@ interface WebauthnServerService {
         publicKeyCredentialGetResultJson: String,
     ): AssertionVerifyResult
 
-    fun toUserInternalId(encodedUserHandle: String): String
 }

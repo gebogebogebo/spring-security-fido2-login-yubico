@@ -25,7 +25,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5")
-	implementation("com.webauthn4j:webauthn4j-core:0.24.0.RELEASE")
 	implementation("com.yubico:webauthn-server-core:2.5.0")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
