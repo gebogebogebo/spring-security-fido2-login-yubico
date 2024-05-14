@@ -1,6 +1,5 @@
 package com.example.springsecuritylogin.controller
 
-import com.example.springsecuritylogin.service.Attestation
 import com.example.springsecuritylogin.service.FidoCredentialService
 import com.example.springsecuritylogin.service.RegisterOption
 import com.example.springsecuritylogin.service.Status
@@ -28,7 +27,6 @@ class Fido2RestController(
         )
 
         return try {
-
             val registerOption = yubicoWebauthnServerService.getRegisterOption(user.username)
             session.setAttribute("registerOption", registerOption)
 
@@ -73,12 +71,10 @@ class Fido2RestController(
         session: HttpSession
     ): ServerPublicKeyCredentialGetOptionsResponse {
         return try {
-            val assertionRequest = yubicoWebauthnServerService.getAuthenticateOption()
+            val authenticateOption = yubicoWebauthnServerService.getAuthenticateOption()
+            session.setAttribute("authenticateOption", authenticateOption)
 
-            session.setAttribute("challenge", assertionRequest.publicKeyCredentialRequestOptions.challenge.base64Url)
-            session.setAttribute("assertionRequest", assertionRequest)
-
-            return ServerPublicKeyCredentialGetOptionsResponse(assertionRequest.publicKeyCredentialRequestOptions)
+            return ServerPublicKeyCredentialGetOptionsResponse(authenticateOption)
         } catch (e: Exception) {
             ServerPublicKeyCredentialGetOptionsResponse(Status.FAILED, e.message ?: "")
         }

@@ -2,8 +2,6 @@ package com.example.springsecuritylogin.service
 
 import com.example.springsecuritylogin.repository.MfidoCredentialRepository
 import com.example.springsecuritylogin.repository.MuserRepository
-import com.webauthn4j.credential.CredentialRecord
-import com.yubico.webauthn.AssertionRequest
 import com.yubico.webauthn.FinishAssertionOptions
 import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
@@ -12,14 +10,13 @@ import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
 import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredential
-import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
-import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions
 import com.yubico.webauthn.data.RelyingPartyIdentity
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
 import com.yubico.webauthn.data.UserVerificationRequirement
 import org.springframework.stereotype.Service
 import java.nio.charset.StandardCharsets
+import java.util.Base64
 
 @Service
 class YubicoWebauthnServerServiceImpl(
@@ -69,7 +66,6 @@ class YubicoWebauthnServerServiceImpl(
         registerOption: RegisterOption,
         attestation: Attestation,
     ): AttestationVerifyResult {
-
         val pkc = PublicKeyCredential.parseRegistrationResponseJson(attestation.publicKeyCredentialJson)
 
         val finishRegistrationOptions = FinishRegistrationOptions.builder()
@@ -84,35 +80,27 @@ class YubicoWebauthnServerServiceImpl(
             signCount = pkc.response.attestation.authenticatorData.signatureCounter,
             credentialPublicKey = result.publicKeyCose.bytes,
         )
-        /*
-        authenticatorData.setSignCount(pkc.getResponse().getAttestation().getAuthenticatorData().getSignatureCounter());
-        authenticatorData.setCredentialId(result.getKeyId().getId().getBytes());
-        authenticatorData.setCredentialPublicKey(result.getPublicKeyCose().getBytes());
-         */
     }
 
-    override fun getAuthenticateOption(): AssertionRequest {
+    override fun getAuthenticateOption(): AuthenticateOption {
         val startAssertionOptions = StartAssertionOptions.builder()
             .username(null)
             .userVerification(UserVerificationRequirement.REQUIRED)
             .timeout(120000)
             .build()
 
-        return rp.startAssertion(startAssertionOptions)
+        return AuthenticateOption(rp.startAssertion(startAssertionOptions))
     }
 
     override fun verifyAuthenticateAssertion(
-        challengeStr: String,
-        assertion: Assertion,           // TODO delete
-        assertionRequest: AssertionRequest,
-        publicKeyCredentialJson: String,
-        credentialRecord: CredentialRecord      // TODO delete
+        authenticateOption: AuthenticateOption,
+        assertion: Assertion,
     ): Boolean {
 
-        val pkc = PublicKeyCredential.parseAssertionResponseJson(publicKeyCredentialJson)
+        val pkc = PublicKeyCredential.parseAssertionResponseJson(assertion.publicKeyCredentialJson)
 
         val finishAssertionOptions = FinishAssertionOptions.builder()
-            .request(assertionRequest)
+            .request(authenticateOption.assertionRequest)
             .response(pkc)
             .build()
 
@@ -124,5 +112,11 @@ class YubicoWebauthnServerServiceImpl(
 
     private fun createUserId(userId: String): ByteArray {
         return ByteArray(userId.toByteArray(StandardCharsets.UTF_8))
+    }
+
+    override fun toUserInternalId(encodedUserHandle: String): String {
+        val decoder = Base64.getUrlDecoder()
+        val userHandle = decoder.decode(encodedUserHandle)
+        return String(userHandle, StandardCharsets.UTF_8)
     }
 }

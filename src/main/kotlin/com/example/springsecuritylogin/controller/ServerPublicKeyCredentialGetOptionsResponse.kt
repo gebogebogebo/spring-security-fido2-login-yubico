@@ -1,11 +1,9 @@
 package com.example.springsecuritylogin.controller
 
+import com.example.springsecuritylogin.service.AuthenticateOption
 import com.example.springsecuritylogin.service.Status
-import com.webauthn4j.data.extension.client.AuthenticationExtensionClientInput
-import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientInputs
 import com.yubico.webauthn.data.AssertionExtensionInputs
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
-import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions
 import com.yubico.webauthn.data.UserVerificationRequirement
 
 class ServerPublicKeyCredentialGetOptionsResponse(
@@ -32,13 +30,13 @@ class ServerPublicKeyCredentialGetOptionsResponse(
     }
 
     constructor(
-        authOptionResponse: PublicKeyCredentialRequestOptions,
+        authenticateOption: AuthenticateOption,
     ) : this(
-        authOptionResponse.challenge.base64Url,
-        authOptionResponse.timeout.orElse(null),
-        authOptionResponse.rpId,
-        authOptionResponse.allowCredentials.orElse(null),
-        authOptionResponse.userVerification.orElse(null),
-        authOptionResponse.extensions
+        authenticateOption.assertionRequest.publicKeyCredentialRequestOptions.challenge.base64Url,
+        authenticateOption.assertionRequest.publicKeyCredentialRequestOptions.timeout.orElse(null),
+        authenticateOption.assertionRequest.publicKeyCredentialRequestOptions.rpId,
+        authenticateOption.assertionRequest.publicKeyCredentialRequestOptions.allowCredentials.orElse(null),
+        authenticateOption.assertionRequest.publicKeyCredentialRequestOptions.userVerification.orElse(null),
+        authenticateOption.assertionRequest.publicKeyCredentialRequestOptions.extensions
     )
 }

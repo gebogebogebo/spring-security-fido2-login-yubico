@@ -1,8 +1,5 @@
 package com.example.springsecuritylogin.service
 
-import com.webauthn4j.credential.CredentialRecord
-import com.yubico.webauthn.AssertionRequest
-
 interface YubicoWebauthnServerService {
     fun getRegisterOption(
         userId: String,
@@ -13,14 +10,13 @@ interface YubicoWebauthnServerService {
         attestation: Attestation,
     ): AttestationVerifyResult
 
-    fun getAuthenticateOption(): AssertionRequest
+    fun getAuthenticateOption(): AuthenticateOption
 
     fun verifyAuthenticateAssertion(
-        challengeStr: String,
+        authenticateOption: AuthenticateOption,
         assertion: Assertion,
-        assertionRequest: AssertionRequest,
-        publicKeyCredentialJson: String,
-        credentialRecord: CredentialRecord
     ): Boolean
+
+    fun toUserInternalId(encodedUserHandle: String): String
 
 }
