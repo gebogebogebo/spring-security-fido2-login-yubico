@@ -1,6 +1,6 @@
 package com.example.springsecuritylogin.service
 
-import com.example.springsecuritylogin.repository.MfidoCredential
+import com.example.springsecuritylogin.repository.MfidoCredentialForYubico
 import com.example.springsecuritylogin.repository.MfidoCredentialRepository
 import com.example.springsecuritylogin.repository.MuserRepository
 import com.webauthn4j.converter.AttestedCredentialDataConverter
@@ -19,46 +19,19 @@ class FidoCredentialServiceImpl(
     private val mUserRepository: MuserRepository,
     private val mFidoCredentialRepository: MfidoCredentialRepository,
 ) : FidoCredentialService {
-    override fun save(userId: String, credentialId: ByteArray, credentialRecord: CredentialRecord) {
+    override fun save(userId: String, attestationVerifyResult: AttestationVerifyResult) {
         val mUser = mUserRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
 
         // encode
-        val encodedCredentialId = Base64UrlUtil.encodeToString(credentialId)
+        val encodedCredentialId = Base64UrlUtil.encodeToString(attestationVerifyResult.credentialId)
 
-        // serialize
-        val objectConverter = ObjectConverter()
-        val attestedCredentialDataConverter = AttestedCredentialDataConverter(objectConverter)
-        val serializedAttestedCredentialData =
-            attestedCredentialDataConverter.convert(credentialRecord.attestedCredentialData)
-
-//        val attestationStatementEnvelope = AttestationStatementEnvelope(credentialRecord.attestationStatement)
-        var attestationStatementEnvelope = AttestationStatementEnvelope()
-        // TODO attestationStatement は NoneAttestationStatement
-        attestationStatementEnvelope.AttestationStatementEnvelope(credentialRecord.attestationStatement)
-
-//
-        val serializedEnvelope = objectConverter.cborConverter.writeValueAsBytes(attestationStatementEnvelope)
-
-//        val serializedTransports = objectConverter.jsonConverter.writeValueAsString(authenticator.transports)
-//        val serializedAuthenticatorExtensions =
-//            objectConverter.cborConverter.writeValueAsBytes(authenticator.authenticatorExtensions)
-//        val serializedClientExtensions =
-//            objectConverter.jsonConverter.writeValueAsString(authenticator.clientExtensions)
-
-        // save
-//        entityManager.persist(
-//            Credentials(
-//                Base64UrlUtil.encodeToString(credentialId),
-//                serializedAttestedCredentialData,
-//                serializedEnvelope,
-//                serializedTransports,
-//                serializedAuthenticatorExtensions,
-//                serializedClientExtensions,
-//                authenticator.counter
-//            )
-//        )
-
-        val entity = MfidoCredential(0, encodedCredentialId, mUser.internalId, serializedAttestedCredentialData)
+        val entity = MfidoCredentialForYubico(
+            0,
+            mUser.internalId,
+            encodedCredentialId,
+            attestationVerifyResult.signCount,
+            attestationVerifyResult.credentialPublicKey
+        )
         mFidoCredentialRepository.save(entity)
     }
 
@@ -69,7 +42,7 @@ class FidoCredentialServiceImpl(
         // deserialize
         val objectConverter = ObjectConverter()
         val attestedCredentialDataConverter = AttestedCredentialDataConverter(objectConverter)
-        val deserializedAttestedCredentialData = attestedCredentialDataConverter.convert(mFidoCredential.ateestedCredentialData)
+        val deserializedAttestedCredentialData = attestedCredentialDataConverter.convert(mFidoCredential.credentialPublicKey)
 
         // TODO ???
         val attestationStatement = NoneAttestationStatement()

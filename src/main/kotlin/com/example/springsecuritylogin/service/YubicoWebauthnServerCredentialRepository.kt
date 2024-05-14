@@ -29,10 +29,45 @@ class YubicoWebauthnServerCredentialRepository(
         return Optional.of("user1")
     }
 
-    override fun lookup(credentialId: ByteArray, p1: ByteArray?): Optional<RegisteredCredential> {
+    override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential> {
+
+        /*
+        RegisteredCredential.builder()
+            .credentialId(credentialId)
+            .userHandle(userHandle)
+            .publicKeyCose(new ByteArray(authenticatorData.getCredentialPublicKey()))
+            .signatureCount(authenticatorData.getSignCount())
+            .build()
+        */
+
         TODO("Not yet implemented")
     }
 
+/*
+    @Override
+    public Optional<RegisteredCredential> lookup(final ByteArray credentialId, final ByteArray userHandle) {
+
+        final String userHandleDec = new String(userHandle.getBytes(), StandardCharsets.UTF_8);
+
+        final Optional<WebAuthnAuthenticatorDataWithType> authenticator = Optional.ofNullable(
+                webAuthnAuthenticatorDataWithTypeCache.findByNulabIdAndCredentialId(
+                        userHandleDec,
+                        credentialId.getBytes(),
+                        () -> webAuthnAuthenticatorDataDao.findAllByNulabId(userHandleDec)
+                )
+        );
+
+        return authenticator
+                .filter(auth -> auth.getWebauthnAuthenticatorDataType().isSecurityDevice())
+                .map(authenticatorData -> RegisteredCredential.builder()
+                        .credentialId(credentialId)
+                        .userHandle(userHandle)
+                        .publicKeyCose(new ByteArray(authenticatorData.getCredentialPublicKey()))
+                        .signatureCount(authenticatorData.getSignCount())
+                        .build());
+    }
+
+ */
     override fun lookupAll(p0: ByteArray): Set<RegisteredCredential> {
         // TODO
         return emptySet()

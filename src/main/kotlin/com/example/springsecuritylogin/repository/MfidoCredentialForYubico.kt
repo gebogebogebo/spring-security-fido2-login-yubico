@@ -13,8 +13,8 @@ import javax.persistence.Table
  * @Table：name属性で連携するテーブル名を指定する
  */
 @Entity
-@Table(name = "M_FIDO_CREDENTIAL")
-data class MfidoCredential(
+@Table(name = "M_FIDO_CREDENTIAL_FOR_YUBICO")
+data class MfidoCredentialForYubico(
     /**
      *  @Id：主キーに指定する。※複合キーの場合は@EmbeddedIdを使用
      *  @GeneratedValue：主キーの指定をJPAに委ねる
@@ -25,12 +25,15 @@ data class MfidoCredential(
     @Column(name="ID")
     var id: Int,
 
-    @Column(name="CREDENTIAL_ID")
-    var credentialId: String,
-
     @Column(name="USER_INTERNAL_ID")
     var userInternalId: String,
 
-    @Column(name="ATTESTED_CREDENTIAL_DATA")
-    var ateestedCredentialData: ByteArray,
+    @Column(name="CREDENTIAL_ID")
+    var credentialId: String,
+
+    @Column(name="SIGN_COUNT")
+    var signCount: Long,
+
+    @Column(name="CREDENTIAL_PUBLIC_KEY")
+    var credentialPublicKey: ByteArray,
 )

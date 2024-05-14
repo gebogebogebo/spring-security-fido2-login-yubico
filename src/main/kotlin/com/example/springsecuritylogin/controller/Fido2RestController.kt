@@ -2,12 +2,10 @@ package com.example.springsecuritylogin.controller
 
 import com.example.springsecuritylogin.service.Attestation
 import com.example.springsecuritylogin.service.FidoCredentialService
+import com.example.springsecuritylogin.service.RegisterOption
 import com.example.springsecuritylogin.service.Status
-import com.example.springsecuritylogin.service.WebAuthn4JServerService
 import com.example.springsecuritylogin.service.YubicoWebauthnServerService
 import com.example.springsecuritylogin.util.SecurityContextUtil
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -17,7 +15,6 @@ import javax.servlet.http.HttpSession
 
 @RestController
 class Fido2RestController(
-    private val webAuthn4JServerService: WebAuthn4JServerService,
     private val yubicoWebauthnServerService: YubicoWebauthnServerService,
     private val fidoCredentialService: FidoCredentialService,
 ) {
@@ -32,11 +29,10 @@ class Fido2RestController(
 
         return try {
 
-            val serverResponse = yubicoWebauthnServerService.getRegisterOption(user.username)
-            session.setAttribute("challenge", serverResponse.challenge.base64Url)
-            session.setAttribute("publicKeyCredentialCreationOptions", serverResponse)
+            val registerOption = yubicoWebauthnServerService.getRegisterOption(user.username)
+            session.setAttribute("registerOption", registerOption)
 
-            return ServerPublicKeyCredentialCreationOptionsResponse(serverResponse)
+            return ServerPublicKeyCredentialCreationOptionsResponse(registerOption)
         } catch (e: Exception) {
             ServerPublicKeyCredentialCreationOptionsResponse(Status.FAILED, e.message ?: "")
         }
@@ -50,41 +46,21 @@ class Fido2RestController(
     ): ServerResponse {
         if (publicKeyCredentialCreateResult.response == null) return ServerResponse(Status.FAILED, "response not found")
 
-        val challenge = session.getAttribute("challenge") as? String
-            ?: return ServerResponse(Status.FAILED, "challenge not found")
-
-        val publicKeyCredentialCreationOptions = session.getAttribute("publicKeyCredentialCreationOptions") as? PublicKeyCredentialCreationOptions
-            ?: return ServerResponse(Status.FAILED, "publicKeyCredentialCreationOptions not found")
+        val registerOption = session.getAttribute("registerOption") as? RegisterOption
+            ?: return ServerResponse(Status.FAILED, "registerOption not found")
 
         val user = SecurityContextUtil.getLoginUser() ?: return ServerPublicKeyCredentialCreationOptionsResponse(
             Status.FAILED,
             "user not found"
         )
 
-        // TODO
-        val mapper = jacksonObjectMapper()
-        val publicKeyCredentialJson = mapper.writeValueAsString(publicKeyCredentialCreateResult)
-
         return try {
-            yubicoWebauthnServerService.verifyRegisterAttestation(
-                challenge,
-                publicKeyCredentialCreationOptions,
-                Attestation(
-                    publicKeyCredentialCreateResult.response.attestationObject,
-                    publicKeyCredentialCreateResult.response.clientDataJSON,
-                ),
-                publicKeyCredentialJson
+            val attestationVerifyResult = yubicoWebauthnServerService.verifyRegisterAttestation(
+                registerOption,
+                publicKeyCredentialCreateResult.toAttestation(),
             )
 
-            val (credentialId, credentialRecord) = webAuthn4JServerService.verifyRegisterAttestation(
-                challenge,
-                Attestation(
-                    publicKeyCredentialCreateResult.response.attestationObject,
-                    publicKeyCredentialCreateResult.response.clientDataJSON,
-                )
-            )
-
-            fidoCredentialService.save(user.username, credentialId, credentialRecord)
+            fidoCredentialService.save(user.username, attestationVerifyResult)
 
             ServerResponse(Status.OK, "")
         } catch (e: Exception) {

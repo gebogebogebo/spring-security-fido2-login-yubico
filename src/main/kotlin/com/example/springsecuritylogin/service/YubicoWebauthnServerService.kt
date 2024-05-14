@@ -2,21 +2,16 @@ package com.example.springsecuritylogin.service
 
 import com.webauthn4j.credential.CredentialRecord
 import com.yubico.webauthn.AssertionRequest
-import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
-import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions
 
 interface YubicoWebauthnServerService {
     fun getRegisterOption(
         userId: String,
-    ): PublicKeyCredentialCreationOptions
+    ): RegisterOption
 
     fun verifyRegisterAttestation(
-        challengeStr: String,
-        publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions,
+        registerOption: RegisterOption,
         attestation: Attestation,
-        publicKeyCredentialJson: String,
-//    ): Pair<ByteArray, CredentialRecord>
-    )
+    ): AttestationVerifyResult
 
     fun getAuthenticateOption(): AssertionRequest
 

@@ -9,11 +9,6 @@ interface WebAuthn4JServerService {
         userId: String,
     ): PublicKeyCredentialCreationOptions
 
-    fun verifyRegisterAttestation(
-        challengeStr: String,
-        attestation: Attestation,
-    ): Pair<ByteArray, CredentialRecord>
-
     fun getAuthenticateOption(): PublicKeyCredentialRequestOptions
 
     fun verifyAuthenticateAssertion(

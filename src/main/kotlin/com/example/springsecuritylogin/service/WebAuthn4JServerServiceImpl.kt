@@ -93,66 +93,6 @@ class WebAuthn4JServerServiceImpl(
 
     }
 
-    override fun verifyRegisterAttestation(
-        challengeStr: String,
-        attestation: Attestation,
-    ): Pair<ByteArray, CredentialRecord> {
-
-        // Client properties
-        val clientExtensionJSON: String? = null /* set clientExtensionJSON */
-        val transports: Set<String>? = null /* set transports */
-
-        // Server properties
-        val challenge = DefaultChallenge(challengeStr)
-        val tokenBindingId: ByteArray? = null /* set tokenBindingId */
-        val serverProperty = ServerProperty(origin, rp.id!!, challenge, tokenBindingId)
-
-        // expectations
-        val pubKeyCredParams: List<PublicKeyCredentialParameters>? = null
-        val userVerificationRequired = false
-        val userPresenceRequired = true
-
-        val registrationRequest = RegistrationRequest(
-            attestation.attestationObject,
-            attestation.clientDataJSON,
-            clientExtensionJSON,
-            transports
-        )
-
-        val registrationParameters = RegistrationParameters(
-            serverProperty,
-            pubKeyCredParams,
-            userVerificationRequired,
-            userPresenceRequired
-        )
-
-        val registrationData = try {
-            WebAuthnManager.createNonStrictWebAuthnManager().parse(registrationRequest)
-        } catch (e: DataConversionException) {
-            // If you would like to handle WebAuthn data structure parse error, please catch DataConversionException
-            throw e
-        }
-
-        try {
-            WebAuthnManager.createNonStrictWebAuthnManager().validate(registrationData, registrationParameters)
-        } catch (e: ValidationException) {
-            // If you would like to handle WebAuthn data validation error, please catch ValidationException
-            throw e
-        }
-
-        // You may create your own Authenticator implementation to save friendly authenticator name
-        val credentialRecord = CredentialRecordImpl(
-            registrationData.attestationObject!!,
-            registrationData.collectedClientData,
-            registrationData.clientExtensions,
-            registrationData.transports,
-        )
-
-        val credentialId = registrationData.attestationObject!!.authenticatorData.attestedCredentialData!!.credentialId
-
-        return credentialId to credentialRecord
-    }
-
     override fun getAuthenticateOption(): PublicKeyCredentialRequestOptions {
         val challenge = DefaultChallenge()
 

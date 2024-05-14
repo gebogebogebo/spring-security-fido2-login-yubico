@@ -1,9 +1,9 @@
 package com.example.springsecuritylogin.controller
 
+import com.example.springsecuritylogin.service.RegisterOption
 import com.example.springsecuritylogin.service.Status
 import com.yubico.webauthn.data.AttestationConveyancePreference
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
-import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import com.yubico.webauthn.data.PublicKeyCredentialParameters
 import com.yubico.webauthn.data.RegistrationExtensionInputs
@@ -40,16 +40,16 @@ class ServerPublicKeyCredentialCreationOptionsResponse(
     }
 
     constructor(
-        regOptionResponse: PublicKeyCredentialCreationOptions,
+        registerOption: RegisterOption,
     ) : this(
-        regOptionResponse.rp,
-        regOptionResponse.user,
-        regOptionResponse.attestation,
-        regOptionResponse.authenticatorSelection.orElse(null),
-        regOptionResponse.challenge.base64Url,
-        regOptionResponse.excludeCredentials.orElse(null),
-        regOptionResponse.pubKeyCredParams,
-        regOptionResponse.timeout.orElse(null),
-        regOptionResponse.extensions,
+        registerOption.publicKeyCredentialCreationOptions.rp,
+        registerOption.publicKeyCredentialCreationOptions.user,
+        registerOption.publicKeyCredentialCreationOptions.attestation,
+        registerOption.publicKeyCredentialCreationOptions.authenticatorSelection.orElse(null),
+        registerOption.publicKeyCredentialCreationOptions.challenge.base64Url,
+        registerOption.publicKeyCredentialCreationOptions.excludeCredentials.orElse(null),
+        registerOption.publicKeyCredentialCreationOptions.pubKeyCredParams,
+        registerOption.publicKeyCredentialCreationOptions.timeout.orElse(null),
+        registerOption.publicKeyCredentialCreationOptions.extensions,
     )
 }

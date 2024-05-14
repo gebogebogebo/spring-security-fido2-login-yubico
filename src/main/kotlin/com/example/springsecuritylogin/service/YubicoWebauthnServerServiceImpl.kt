@@ -41,7 +41,7 @@ class YubicoWebauthnServerServiceImpl(
 //                .validateSignatureCounter(false)
         .build()
 
-    override fun getRegisterOption(userId: String): PublicKeyCredentialCreationOptions {
+    override fun getRegisterOption(userId: String): RegisterOption {
         val mUser = mUserRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
 
         val user = UserIdentity.builder()
@@ -62,37 +62,33 @@ class YubicoWebauthnServerServiceImpl(
             .timeout(60000)
             .build()
 
-        return rp.startRegistration(startRegistrationOptions)
+        return RegisterOption(rp.startRegistration(startRegistrationOptions))
     }
 
     override fun verifyRegisterAttestation(
-        challengeStr: String,
-        publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions,
+        registerOption: RegisterOption,
         attestation: Attestation,
-        publicKeyCredentialJson: String,
-//    ): Pair<kotlin.ByteArray, CredentialRecord> {
-    ) {
+    ): AttestationVerifyResult {
 
-        val pkc = PublicKeyCredential.parseRegistrationResponseJson(publicKeyCredentialJson)
+        val pkc = PublicKeyCredential.parseRegistrationResponseJson(attestation.publicKeyCredentialJson)
 
         val finishRegistrationOptions = FinishRegistrationOptions.builder()
-            .request(publicKeyCredentialCreationOptions)
+            .request(registerOption.publicKeyCredentialCreationOptions)
             .response(pkc)
             .build()
 
         val result = rp.finishRegistration(finishRegistrationOptions)
 
+        return AttestationVerifyResult(
+            credentialId = result.keyId.id.bytes,
+            signCount = pkc.response.attestation.authenticatorData.signatureCounter,
+            credentialPublicKey = result.publicKeyCose.bytes,
+        )
         /*
-            result = relyingPartyComponent
-                    .getRelyingPartyAttestationNoneForRegistration()
-                    .finishRegistration(FinishRegistrationOptions.builder()
-                            .request(options)
-                            .response(pkc)
-                            .build());
-
+        authenticatorData.setSignCount(pkc.getResponse().getAttestation().getAuthenticatorData().getSignatureCounter());
+        authenticatorData.setCredentialId(result.getKeyId().getId().getBytes());
+        authenticatorData.setCredentialPublicKey(result.getPublicKeyCose().getBytes());
          */
-
-        return
     }
 
     override fun getAuthenticateOption(): AssertionRequest {
