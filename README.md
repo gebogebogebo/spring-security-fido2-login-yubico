@@ -61,7 +61,7 @@ create table M_USER (
 create table M_FIDO_CREDENTIAL_FOR_YUBICO (
     ID int default 0 not null auto_increment primary key,
     USER_INTERNAL_ID varchar(32) not null,
-    CREDENTIAL_ID varchar(256) not null,
+    CREDENTIAL_ID varbinary(1000) not null,
     SIGN_COUNT bigint default 0 not null,
     CREDENTIAL_PUBLIC_KEY varbinary(1000) not null
 );

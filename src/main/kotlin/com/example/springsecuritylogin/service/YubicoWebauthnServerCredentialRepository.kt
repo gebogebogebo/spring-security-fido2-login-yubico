@@ -34,13 +34,9 @@ class YubicoWebauthnServerCredentialRepository(
 
     override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential> {
 
-        // encode
-        val encoder = Base64.getUrlEncoder()
-        val encodedCredentialId = encoder.encodeToString(credentialId.bytes)
-
         val userInternalId = String(userHandle.bytes)
         val credential = mFidoCredentialRepository.findByUserInternalId(userInternalId)
-            .find { it.credentialId == encodedCredentialId }
+            .find { it.credentialId.contentEquals(credentialId.bytes) }
         if (credential == null) {
             return Optional.empty()
         }

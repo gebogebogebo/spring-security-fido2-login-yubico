@@ -29,7 +29,7 @@ data class MfidoCredentialForYubico(
     var userInternalId: String,
 
     @Column(name="CREDENTIAL_ID")
-    var credentialId: String,
+    var credentialId: ByteArray,
 
     @Column(name="SIGN_COUNT")
     var signCount: Long,

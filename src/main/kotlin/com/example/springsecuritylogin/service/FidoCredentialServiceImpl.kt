@@ -15,14 +15,10 @@ class FidoCredentialServiceImpl(
     override fun save(userId: String, attestationVerifyResult: AttestationVerifyResult) {
         val mUser = mUserRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
 
-        // encode
-        val encoder = Base64.getUrlEncoder()
-        val encodedCredentialId = encoder.encodeToString(attestationVerifyResult.credentialId)
-
         val entity = MfidoCredentialForYubico(
             0,
             mUser.internalId,
-            encodedCredentialId,
+            attestationVerifyResult.credentialId,
             attestationVerifyResult.signCount,
             attestationVerifyResult.credentialPublicKey
         )
