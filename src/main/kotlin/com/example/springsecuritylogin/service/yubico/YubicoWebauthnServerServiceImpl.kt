@@ -1,6 +1,11 @@
-package com.example.springsecuritylogin.service
+package com.example.springsecuritylogin.service.yubico
 
 import com.example.springsecuritylogin.repository.MuserRepository
+import com.example.springsecuritylogin.service.AssertionVerifyResult
+import com.example.springsecuritylogin.service.AttestationVerifyResult
+import com.example.springsecuritylogin.service.AuthenticateOption
+import com.example.springsecuritylogin.service.RegisterOption
+import com.example.springsecuritylogin.service.WebauthnServerService
 import com.yubico.webauthn.FinishAssertionOptions
 import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
