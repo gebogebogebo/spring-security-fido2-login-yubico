@@ -1,7 +1,5 @@
 package com.example.springsecuritylogin
 
-import com.example.springsecuritylogin.controller.PublicKeyCredentialGetResult
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -36,18 +34,18 @@ class Fido2AuthenticationFilter(
         return authenticationManager.authenticate(authRequest)
     }
 
-    private fun obtainAssertion(request: HttpServletRequest): PublicKeyCredentialGetResult {
+    private fun obtainAssertion(request: HttpServletRequest): String {
         val json = request.getParameter("assertion")
         if (json.isNullOrEmpty()) {
             throw AuthenticationServiceException("assertion")
         }
-        return ObjectMapper().readValue(json, PublicKeyCredentialGetResult::class.java)
+        return json
     }
 
     private fun obtainPrincipal(request: HttpServletRequest): User {
         val session = request.session
         val securityContext = session.getAttribute("SPRING_SECURITY_CONTEXT") as? SecurityContext
-            ?: return User("<dmy>","",emptyList())
+            ?: return User("<dmy>", "", emptyList())
         val principal = securityContext.authentication.principal
         if (principal !is User) {
             throw AuthenticationServiceException("assertion")

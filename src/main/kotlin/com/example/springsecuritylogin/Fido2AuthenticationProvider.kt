@@ -26,12 +26,12 @@ class Fido2AuthenticationProvider(
             val authenticateOption = request?.session?.getAttribute("authenticateOption") as? AuthenticateOption
                 ?: throw BadCredentialsException("authenticateOption not found")
 
-            val getResult = authentication.credentials.publicKeyCredentialGetResult
-            if (getResult.response == null) {
+            val publicKeyCredentialGetResultJson = authentication.credentials.publicKeyCredentialGetResultJson
+            if (publicKeyCredentialGetResultJson.isEmpty()) {
                 throw BadCredentialsException("Invalid Assertion")
             }
 
-            val userInternalId = webauthnServerService.toUserInternalId(getResult.response.userHandle)
+//            val userInternalId = webauthnServerService.toUserInternalId(getResult.response.userHandle)
 //            val (credentialRecord, userId) = mFidoCredentialService.load(userInternalId, getResult.id)
 //            if (credentialRecord == null) {
 //                throw BadCredentialsException("credential not found")
@@ -40,7 +40,7 @@ class Fido2AuthenticationProvider(
             val verifyResult = try {
                 webauthnServerService.verifyAuthenticateAssertion(
                     authenticateOption,
-                    getResult.toAssertion(),
+                    publicKeyCredentialGetResultJson,
                 )
             } catch (e: Exception) {
                 throw BadCredentialsException("Invalid Assertion")

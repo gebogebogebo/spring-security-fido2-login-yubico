@@ -1,13 +1,12 @@
 package com.example.springsecuritylogin
 
-import com.example.springsecuritylogin.controller.PublicKeyCredentialGetResult
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 
 
 class AssertionAuthenticationToken(
-    val principal: User,
+    private val principal: User,
     val credentials: Fido2Credentials,
     authorities: Collection<SimpleGrantedAuthority>,
 ) : AbstractAuthenticationToken(authorities) {
@@ -20,6 +19,6 @@ class AssertionAuthenticationToken(
     }
 
     class Fido2Credentials(
-        val publicKeyCredentialGetResult: PublicKeyCredentialGetResult,
+        val publicKeyCredentialGetResultJson: String,
     )
 }
