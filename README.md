@@ -55,7 +55,7 @@ create table M_USER (
     USER_ID varchar(32) not null primary key,
     DISPLAY_NAME varchar(64) not null,
     PASSWORD varchar(128) not null,
-    USER_INTERNAL_ID varchar(32) not null unique
+    INTERNAL_ID varchar(32) not null unique
 );
 
 create table M_FIDO_CREDENTIAL_FOR_YUBICO (
@@ -77,21 +77,25 @@ Insert Records
 - user3, ユーザー3, password3 
 
 ```sql
-INSERT INTO M_USER (USER_ID, DISPLAY_NAME, PASSWORD, USER_INTERNAL_ID) VALUES (
+INSERT INTO M_USER (USER_ID, DISPLAY_NAME, PASSWORD, INTERNAL_ID) VALUES
+(
   'user1', 
   'ユーザー1',
   '{bcrypt}$2a$10$xeYLBfOQILT1XKYhofosg.a3I1Vg8vF6Kd4NXjfigyy/.N.7AwYU.',
-  '_USER1');                                             
-INSERT INTO M_USER (USER_ID, DISPLAY_NAME, PASSWORD, USER_INTERNAL_ID) VALUES (
+  '_USER1'
+),
+(                                                                      
   'user2', 
   'ユーザー2',
   '{bcrypt}$2a$10$142YrOgdho1EvrXhstuYMuD.6l5XrJt4yyJ6t6kcJLi7bHvDzpF3O',
-  '_USER2');
-INSERT INTO M_USER (USER_ID, DISPLAY_NAME, PASSWORD, USER_INTERNAL_ID) VALUES (
+  '_USER2'
+),
+(
   'user3', 
   'ユーザー3',
   '{bcrypt}$2a$10$WlijXJStltiGmakfhoRBQuMy2Xlw6EOtnbrMQRg65tlF0aU5y2.7i',
-  '_USER3');
+  '_USER3'
+);
 ```
 
 

@@ -32,6 +32,6 @@ data class Muser(
     @Column(name="PASSWORD")
     var password: String,
 
-    @Column(name="USER_INTERNAL_ID")
+    @Column(name="INTERNAL_ID")
     var internalId: String,
 )
