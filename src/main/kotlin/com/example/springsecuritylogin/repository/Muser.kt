@@ -26,8 +26,8 @@ data class Muser(
     @Column(name="USER_ID")
     var id: String,
 
-    @Column(name="USER_NAME")
-    var name: String,
+    @Column(name="DISPLAY_NAME")
+    var displayName: String,
 
     @Column(name="PASSWORD")
     var password: String,

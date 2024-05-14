@@ -56,6 +56,7 @@ class YubicoWebauthnServerCredentialRepository(
     }
 
     override fun lookupAll(p0: ByteArray): Set<RegisteredCredential> {
-        TODO("Not yet implemented")
+        // There is no needs to lookup credential_id because it is a unique key
+        return emptySet()
     }
 }
