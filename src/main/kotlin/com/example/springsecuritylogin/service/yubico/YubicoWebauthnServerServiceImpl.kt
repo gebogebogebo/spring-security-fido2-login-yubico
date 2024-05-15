@@ -45,7 +45,7 @@ class YubicoWebauthnServerServiceImpl(
 
         val user = UserIdentity.builder()
             .name(mUser.userId)
-            .displayName(mUser.userId)
+            .displayName(mUser.displayName)
             .id(createUserId(mUser.internalId))
             .build()
 
