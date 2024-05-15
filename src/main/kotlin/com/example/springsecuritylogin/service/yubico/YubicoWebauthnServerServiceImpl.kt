@@ -41,11 +41,11 @@ class YubicoWebauthnServerServiceImpl(
         .build()
 
     override fun getRegisterOption(userId: String): RegisterOption {
-        val mUser = mUserRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
+        val mUser = mUserRepository.findByUserId(userId) ?: throw RuntimeException("User not found")
 
         val user = UserIdentity.builder()
-            .name(mUser.id)
-            .displayName(mUser.id)
+            .name(mUser.userId)
+            .displayName(mUser.userId)
             .id(createUserId(mUser.internalId))
             .build()
 

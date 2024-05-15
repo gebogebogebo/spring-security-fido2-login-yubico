@@ -23,8 +23,11 @@ data class Muser(
      *  @Column：name属性でマッピングするカラム名を指定する
      */
     @Id
+    @Column(name="INTERNAL_ID")
+    var internalId: String,
+
     @Column(name="USER_ID")
-    var id: String,
+    var userId: String,
 
     @Column(name="DISPLAY_NAME")
     var displayName: String,
@@ -32,6 +35,4 @@ data class Muser(
     @Column(name="PASSWORD")
     var password: String,
 
-    @Column(name="INTERNAL_ID")
-    var internalId: String,
 )

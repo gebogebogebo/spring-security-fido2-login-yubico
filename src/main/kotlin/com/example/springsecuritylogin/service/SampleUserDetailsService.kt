@@ -19,7 +19,7 @@ class SampleUserDetailsService(
             throw UsernameNotFoundException("userId is null or empty")
         }
 
-        val mUser = mUserRepository.findById(userId).orElse(null) ?: throw UsernameNotFoundException("Not found userId")
+        val mUser = mUserRepository.findByUserId(userId) ?: throw UsernameNotFoundException("Not found userId")
 
         val authorities = if (SecurityContextUtil.isUsernameAuthenticated()) {
             listOf(
@@ -30,6 +30,6 @@ class SampleUserDetailsService(
             listOf(SimpleGrantedAuthority(SecurityContextUtil.Auth.AUTHENTICATED_USERNAME.value))
         }
 
-        return User(mUser.id, mUser.password, authorities)
+        return User(mUser.userId, mUser.password, authorities)
     }
 }

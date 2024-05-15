@@ -16,4 +16,5 @@ import org.springframework.data.jpa.repository.JpaRepository
  */
 interface MuserRepository : JpaRepository<Muser, String> {
     fun findByInternalId(internalId: String): Muser?
+    fun findByUserId(userId: String): Muser?
 }

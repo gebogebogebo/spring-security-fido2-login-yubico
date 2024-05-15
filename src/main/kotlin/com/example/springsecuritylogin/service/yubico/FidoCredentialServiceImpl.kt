@@ -14,7 +14,7 @@ class FidoCredentialServiceImpl(
     private val mFidoCredentialRepository: MfidoCredentialRepository,
 ) : FidoCredentialService {
     override fun save(userId: String, attestationVerifyResult: AttestationVerifyResult) {
-        val mUser = mUserRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
+        val mUser = mUserRepository.findByUserId(userId) ?: throw RuntimeException("User not found")
 
         val entity = MfidoCredentialForYubico(
             0,

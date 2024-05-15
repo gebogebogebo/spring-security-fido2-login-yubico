@@ -18,7 +18,7 @@ class YubicoWebauthnServerCredentialRepository(
 ) : CredentialRepository {
 
     override fun getCredentialIdsForUsername(userId: String): Set<PublicKeyCredentialDescriptor> {
-        val mUser = mUserRepository.findById(userId).orElse(null) ?: return emptySet()
+        val mUser = mUserRepository.findByUserId(userId) ?: return emptySet()
 
         return mFidoCredentialRepository.findByUserInternalId(mUser.internalId)
             .map {
@@ -37,7 +37,7 @@ class YubicoWebauthnServerCredentialRepository(
         val userInternalId = String(userHandle.bytes)
         val mUser = mUserRepository.findByInternalId(userInternalId) ?: return Optional.empty()
 
-        return Optional.of(mUser.id)
+        return Optional.of(mUser.userId)
     }
 
     override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential> {
