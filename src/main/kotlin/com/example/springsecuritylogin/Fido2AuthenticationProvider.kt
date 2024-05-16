@@ -52,14 +52,14 @@ class Fido2AuthenticationProvider(
             SimpleGrantedAuthority(SecurityContextUtil.Role.USER.value)
         )
 
-        val authencatedPrincipal = User(userName, "", authorities)
+        val authenticatedPrincipal = User(userName, "", authorities)
 
-        var result = AssertionAuthenticationToken(authencatedPrincipal, authentication.credentials, authorities)
+        val result = AssertionAuthenticationToken(authenticatedPrincipal, authentication.credentials, authorities)
         result.isAuthenticated = true
         return result
     }
 
-    override fun supports(authentication: Class<*>?): Boolean {
+    override fun supports(authentication: Class<*>): Boolean {
         return AssertionAuthenticationToken::class.java.isAssignableFrom(authentication)
     }
 }
