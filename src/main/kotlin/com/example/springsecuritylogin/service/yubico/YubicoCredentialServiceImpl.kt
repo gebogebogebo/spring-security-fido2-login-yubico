@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class FidoCredentialServiceImpl(
+class YubicoCredentialServiceImpl(
     private val mUserRepository: MuserRepository,
     private val mFidoCredentialRepository: MfidoCredentialRepository,
 ) : FidoCredentialService {
