@@ -12,6 +12,7 @@ import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartAssertionOptions
 import com.yubico.webauthn.StartRegistrationOptions
+import com.yubico.webauthn.data.AttestationConveyancePreference
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
 import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredential
@@ -28,17 +29,28 @@ class YubicoWebauthnServerServiceImpl(
     credentialRepository: CredentialRepository,
 ) : WebauthnServerService {
     private val rpId = RelyingPartyIdentity.builder()
+        // 自サイトのIDを指定する。通常はドメイン名を設定する
         .id("localhost")
+        // 自サイトの名前を指定する。
         .name("yubico-webauthn-server-test")
+
         .build()
 
     private val rp = RelyingParty.builder()
         .identity(rpId)
         .credentialRepository(credentialRepository)
+
+        // 自サイトのオリジンを指定する、ここで許可されたオリジンからのリクエストのみ受け付ける
         .origins(setOf("http://localhost:8080"))
-//                .attestationConveyancePreference(AttestationConveyancePreference.NONE)
-//                .allowUntrustedAttestation(true)
-//                .validateSignatureCounter(false)
+
+        // 登録結果(attestation)に署名をつけるかどうかを指定する。デフォルトはNONE(署名無し)
+        // 署名が付く場合、attestationStatementに署名、formatに署名形式が含まれる
+        // 署名形式は packed, tpm, android-key など種類があって検証方法も異なるが、ここではNONE指定なので深く考えないことにする
+        .attestationConveyancePreference(AttestationConveyancePreference.NONE)
+
+        // 認証時に署名カウンタを検証するかどうかを指定する。デフォルトはtrue
+        .validateSignatureCounter(true)
+
         .build()
 
     override fun getRegisterOption(userId: String): RegisterOption {
@@ -51,9 +63,10 @@ class YubicoWebauthnServerServiceImpl(
             .build()
 
         val authenticatorSelectionCriteria = AuthenticatorSelectionCriteria.builder()
+            // パスキーとして登録する場合は REQUIRED を指定すること
             .residentKey(ResidentKeyRequirement.REQUIRED)
+            // パスキーとして登録する場合は REQUIRED を指定すること
             .userVerification(UserVerificationRequirement.REQUIRED)
-//            .authenticatorAttachment(AuthenticatorAttachment.PLATFORM)
             .build()
 
         val startRegistrationOptions = StartRegistrationOptions.builder()

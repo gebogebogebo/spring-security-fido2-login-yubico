@@ -395,3 +395,11 @@ Caused by: java.nio.channels.OverlappingFileLockException
 org.h2.jdbc.JdbcSQLSyntaxErrorException: SQLステートメントに文法エラーがあります "DROP TABLEM_FIDO_CREDENTIAL_FOR_YUBICO[*]"; 期待されるステートメント "TABLE, INDEX, USER, SEQUENCE, CONSTANT, TRIGGER, VIEW, ROLE, ALIAS, SCHEMA, ALL, DOMAIN, TYPE, DATATYPE, AGGREGATE, SYNONYM"
 Syntax error in SQL statement "DROP TABLEM_FIDO_CREDENTIAL_FOR_YUBICO[*]"; expected "TABLE, INDEX, USER, SEQUENCE, CONSTANT, TRIGGER, VIEW, ROLE, ALIAS, SCHEMA, ALL, DOMAIN, TYPE, DATATYPE, AGGREGATE, SYNONYM"; SQL statement:
 drop tableM_FIDO_CREDENTIAL_FOR_YUBICO [42001-200]
+2024-05-19 16:09:38 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: SQLステートメントに文法エラーがあります "DELELTE[*] M_FIDO_CREDENTIAL_FOR_YUBICO"; 期待されるステートメント "DELETE, DROP, DECLARE, DEALLOCATE"
+Syntax error in SQL statement "DELELTE[*] M_FIDO_CREDENTIAL_FOR_YUBICO"; expected "DELETE, DROP, DECLARE, DEALLOCATE"; SQL statement:
+delelte M_FIDO_CREDENTIAL_FOR_YUBICO [42001-200]
+2024-05-19 16:09:43 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: SQLステートメントに文法エラーがあります "DELELTE[*] FROM M_FIDO_CREDENTIAL_FOR_YUBICO"; 期待されるステートメント "DELETE, DROP, DECLARE, DEALLOCATE"
+Syntax error in SQL statement "DELELTE[*] FROM M_FIDO_CREDENTIAL_FOR_YUBICO"; expected "DELETE, DROP, DECLARE, DEALLOCATE"; SQL statement:
+delelte from M_FIDO_CREDENTIAL_FOR_YUBICO [42001-200]
