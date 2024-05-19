@@ -55,8 +55,9 @@ class YubicoWebauthnServerCredentialRepository(
         )
     }
 
-    override fun lookupAll(p0: ByteArray): Set<RegisteredCredential> {
+    override fun lookupAll(credentialId: ByteArray): Set<RegisteredCredential> {
         // There is no needs to lookup credential_id because it is a unique key
+        // TODO 実装もしてみる
         return emptySet()
     }
 }
