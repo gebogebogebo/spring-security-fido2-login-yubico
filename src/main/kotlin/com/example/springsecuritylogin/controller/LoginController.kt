@@ -42,7 +42,7 @@ class LoginController {
     }
 
     @GetMapping("password")
-    fun loginPassowrd(model: Model): String {
+    fun loginPassword(model: Model): String {
         val user = SecurityContextUtil.getLoginUser()
         model.addAttribute("username", user?.username)
         return "password"
